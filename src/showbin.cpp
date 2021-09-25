@@ -26,6 +26,13 @@ const char* OCTAL_PREFIX {"0o"};
 //
 // Helpers
 //
+std::string str_tolower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+                   [](unsigned char c){ return std::tolower(c); } // correct
+                  );
+    return s;
+}
+
 string ShowBin::_trim(char const *str)
 {
   // Trim leading non-letters
@@ -38,13 +45,6 @@ string ShowBin::_trim(char const *str)
   return string(str, end+1);
 }
 
-
-std::string str_tolower(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(),
-                   [](unsigned char c){ return std::tolower(c); } // correct
-                  );
-    return s;
-}
 
 bool NumberTypeParser::_onlyHasHexDigits(string s) {
     s = str_tolower(s);
@@ -63,7 +63,8 @@ bool NumberTypeParser::_onlyHasBinaryDigits(string s) {
     return s.find_first_not_of( "01" ) == string::npos;
 }
 
-const char * NumberTypeParser::_movePastPrefixIfPresent(std::string in) {
+//const char * NumberTypeParser::_movePastPrefixIfPresent(std::string in) {
+const string NumberTypeParser::_movePastPrefixIfPresent(std::string in) {
     in = str_tolower(in);
     const char* newStart;
 
@@ -79,47 +80,47 @@ const char * NumberTypeParser::_movePastPrefixIfPresent(std::string in) {
 
 bool NumberTypeParser::_prefixedNumberOnlyHasHexDigits(std::string in)
 {
-    const char* newStart = _movePastPrefixIfPresent(in);
+    const std::string newStart = _movePastPrefixIfPresent(in);
     return _onlyHasHexDigits(newStart);
 }
 
 bool NumberTypeParser::_prefixedNumberOnlyHasOctalDigits(std::string in)
 {
-    const char* newStart = _movePastPrefixIfPresent(in);
+    const std::string newStart = _movePastPrefixIfPresent(in);
     return _onlyHasOctalDigits(newStart);
 }
 
 bool NumberTypeParser::_prefixedNumberOnlyHasDigits(std::string in)
 {
-    const char* newStart = _movePastPrefixIfPresent(in);
+    const std::string newStart = _movePastPrefixIfPresent(in);
     return _onlyHasDigits(newStart);
 }
 
 bool NumberTypeParser::_prefixedNumberOnlyHasBinaryDigits(std::string in)
 {
-    const char* newStart = _movePastPrefixIfPresent(in);
+    const std::string newStart = _movePastPrefixIfPresent(in);
     return _onlyHasBinaryDigits(newStart);
 }
 
 
 bool NumberTypeParser::_hasPrefix(std::string prefix, std::string in)
 {
-    DEBUG_PRINT(in + " ");
-    DEBUG_PRINT(prefix + "\n");
-    if (in.find(prefix) == 0) DEBUG_PRINT("Has prefix\n");
-    else DEBUG_PRINT("NO prefix\n");
+//    DEBUG_PRINT(in + " ");
+//    DEBUG_PRINT(prefix + "\n");
+//    if (in.find(prefix) == 0) DEBUG_PRINT("Has prefix\n");
+//    else DEBUG_PRINT("NO prefix\n");
     return in.find(prefix) == 0;
 }
 
 bool NumberTypeParser::_isDecimalNumber(std::string in)
 {
-    DEBUG_PRINT(in + "\n");
+//    DEBUG_PRINT(in + "\n");
     if (_onlyHasDigits(in)) {
-        DEBUG_PRINT("only has digits\n");
+//        DEBUG_PRINT("only has digits\n");
         return true;
     }
     else {
-        DEBUG_PRINT("number does not have only digits\n");
+//        DEBUG_PRINT("number does not have only digits\n");
         return false;
     }
 }
@@ -164,6 +165,45 @@ enum NumberType NumberTypeParser::getNumberType(std::string in)
     else return NumberType::Unknown;
 }
 
+int NumberTypeParser::parseToInt(std::string in) {
+    int digitPosition {1};
+    int n {0};
+
+    for(int i = in.size(); i > 0; i--) {
+        n += (in[i-1] - '0') * digitPosition;
+        digitPosition *= 10;
+    }
+    return n;
+}
+
+int NumberTypeParser::parseHexToInt(std::string in) {
+    DEBUG_PRINT(in);
+    int digitPosition {1};
+    int n {0};
+
+//    const string newStart = _movePastPrefixIfPresent(in);
+//    DEBUG_PRINT(newStart);
+    in = _movePastPrefixIfPresent(in);
+    DEBUG_PRINT(in);
+
+    cout << __FILE__ << ":" << __LINE__ << ": " << "in.size(): " << in.size() << endl;
+    for(int i = in.size(); i > 0; i--) {
+        if (isdigit(in[i-1])) {
+            DEBUG_PRINT("GOT DIGIT");
+            n += (in[i-1] - '0') * digitPosition;
+        } else if (isalpha(in[i-1])) {
+            DEBUG_PRINT("GOT HEX");
+            n += (10 + in[i-1] - 'a') * digitPosition;
+            cout << __FILE__ << ":" << __LINE__ << ": " << "n: " << n << endl;
+        }
+        digitPosition *= 16;
+
+        cout << __FILE__ << ":" << __LINE__ << ": " << "n: " << n << endl;
+    }
+    return n;
+}
+
+
 //
 //
 //
@@ -180,4 +220,28 @@ NumberType ShowBin::detectBase(std::string inString) {
     auto s = _trim(c_string);
 
     return NumberTypeParser::getNumberType(s);
+}
+
+int ShowBin::convertToNumber(std::string in) {
+    ShowBin s;
+    int n {-1};
+
+    switch (s.detectBase(in)) {
+        case NumberType::Binary:
+
+            break;
+        case NumberType::Decimal:
+            return NumberTypeParser::parseToInt(in);
+            break;
+        case NumberType::Octal:
+            break;
+        case NumberType::Hexidecimal:
+            DEBUG_PRINT("GOT HEX");
+            return NumberTypeParser::parseHexToInt(in);
+            break;
+        default:
+            DEBUG_PRINT("Unknown Number\n");
+            break;
+    }
+    return 1;
 }
