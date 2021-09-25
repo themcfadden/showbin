@@ -26,7 +26,7 @@ const char* OCTAL_PREFIX {"0o"};
 //
 // Helpers
 //
-string Base::_trim(char const *str)
+string ShowBin::_trim(char const *str)
 {
   // Trim leading non-letters
   while(!isalnum(*str)) str++;
@@ -167,15 +167,15 @@ enum NumberType NumberTypeParser::getNumberType(std::string in)
 //
 //
 //
-bool Base::_checkForPrefix(string prefix, string in) {
+bool ShowBin::_checkForPrefix(string prefix, string in) {
     return in.rfind(prefix, 0) == 0;
 }
 
-//bool Base::_checkForShortPrefix(string prefix, string in) {
+//bool ShowBin::_checkForShortPrefix(string prefix, string in) {
 //    return in.rfind(BINARY_SHORT_PREFIX, 0) == 0;
 //}
 
-NumberType Base::detectBase(std::string inString) {
+NumberType ShowBin::detectBase(std::string inString) {
     const auto c_string = inString.c_str();
     auto s = _trim(c_string);
 

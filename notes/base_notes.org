@@ -1,4 +1,4 @@
-#+TITLE: Base Notes
+#+TITLE: ShowBin Notes
 
 * Project
 This is a simple command line tool to display a number in any base to any base.

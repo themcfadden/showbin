@@ -37,9 +37,9 @@ class NumberTypeParser
 
 };
 
-class Base {
+class ShowBin {
     public:
-        Base() {};
+        ShowBin() {};
         enum NumberType detectBase(std::string inputNUmber);
 
     private:

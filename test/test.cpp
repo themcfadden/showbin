@@ -17,7 +17,7 @@ int factorial(int number) { return number <= 1 ? number : factorial(number - 1) 
 //    - -b flag for binary output, etc
 
 TEST_CASE("Input") {
-	Base b;
+	ShowBin b;
 	SUBCASE("Detect Decimal") {
 		std::string inputString = " 123";
 		CHECK(NumberType::Decimal == b.detectBase(inputString));
