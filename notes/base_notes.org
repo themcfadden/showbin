@@ -1,0 +1,5 @@
+#+TITLE: Base Notes
+
+* Project
+This is a simple command line tool to display a number in any base to any base.
+The primary need is to display numbers to and from bitfields.
