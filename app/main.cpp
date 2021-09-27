@@ -1,5 +1,5 @@
 
-#include "inc.hpp"
+#include "showbin.hpp"
 #include <iostream>
 
 #include <unistd.h>
@@ -10,8 +10,28 @@
 using namespace std;
 
 int main(int argc, char** argv) {
+	ShowBin b;
 
-  printf("\nDone.\n");
+  cout << "One:" << endl;
+	b.convertAndDisplay("1");
+  cout << endl;
 
-  return 0;
+  cout << "Two:" << endl;
+  b.convertAndDisplay("2");
+  cout << endl;
+
+  cout << "Three:" << endl;
+  b.convertAndDisplay("3");
+  cout << endl;
+
+  cout << endl;
+  b.convertAndDisplay("0xAA");
+  cout << endl;
+
+  cout << endl;
+  b.convertAndDisplay("0xAAA");
+  cout << endl;
+
+  cout << "Done.\n";
+
 }

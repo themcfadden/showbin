@@ -33,7 +33,7 @@ std::string str_tolower(std::string s) {
     return s;
 }
 
-string ShowBin::_trim(char const *str)
+string NumberTypeParser::_trim(char const *str)
 {
   // Trim leading non-letters
   while(!isalnum(*str)) str++;
@@ -177,32 +177,44 @@ int NumberTypeParser::parseToInt(std::string in) {
 }
 
 int NumberTypeParser::parseHexToInt(std::string in) {
-    DEBUG_PRINT(in);
     int digitPosition {1};
     int n {0};
 
-//    const string newStart = _movePastPrefixIfPresent(in);
-//    DEBUG_PRINT(newStart);
     in = _movePastPrefixIfPresent(in);
-    DEBUG_PRINT(in);
 
-    cout << __FILE__ << ":" << __LINE__ << ": " << "in.size(): " << in.size() << endl;
     for(int i = in.size(); i > 0; i--) {
         if (isdigit(in[i-1])) {
-            DEBUG_PRINT("GOT DIGIT");
             n += (in[i-1] - '0') * digitPosition;
         } else if (isalpha(in[i-1])) {
-            DEBUG_PRINT("GOT HEX");
             n += (10 + in[i-1] - 'a') * digitPosition;
-            cout << __FILE__ << ":" << __LINE__ << ": " << "n: " << n << endl;
         }
         digitPosition *= 16;
-
-        cout << __FILE__ << ":" << __LINE__ << ": " << "n: " << n << endl;
     }
     return n;
 }
 
+int NumberTypeParser::parseOctalToInt(std::string in) {
+    int digitPosition {1};
+    int n {0};
+
+    in = _movePastPrefixIfPresent(in);
+
+    for(int i = in.size(); i > 0; i--) {
+        if (isdigit(in[i-1])) {
+            n += (in[i-1] - '0') * digitPosition;
+        }
+        digitPosition *= 8;
+    }
+    return n;
+}
+
+
+enum NumberType NumberTypeParser::detectBase(std::string inString) {
+    const auto c_string = inString.c_str();
+    auto s = _trim(c_string);
+
+    return NumberTypeParser::getNumberType(s);
+}
 
 //
 //
@@ -215,33 +227,81 @@ bool ShowBin::_checkForPrefix(string prefix, string in) {
 //    return in.rfind(BINARY_SHORT_PREFIX, 0) == 0;
 //}
 
-NumberType ShowBin::detectBase(std::string inString) {
-    const auto c_string = inString.c_str();
-    auto s = _trim(c_string);
-
-    return NumberTypeParser::getNumberType(s);
-}
 
 int ShowBin::convertToNumber(std::string in) {
-    ShowBin s;
     int n {-1};
 
-    switch (s.detectBase(in)) {
+    switch (NumberTypeParser::detectBase(in)) {
         case NumberType::Binary:
-
+            cout << "Not implemented yet\n";
             break;
         case NumberType::Decimal:
             return NumberTypeParser::parseToInt(in);
             break;
         case NumberType::Octal:
+            return NumberTypeParser::parseOctalToInt(in);
             break;
         case NumberType::Hexidecimal:
-            DEBUG_PRINT("GOT HEX");
             return NumberTypeParser::parseHexToInt(in);
             break;
         default:
             DEBUG_PRINT("Unknown Number\n");
             break;
     }
-    return 1;
+    return -1;
+}
+
+void ShowBin::displayAsPrettyBinary(int n) {
+    char buffer[64] {0};
+    char* p = buffer + 64;
+
+    do
+    {
+        *--p = '0' + (n & 1);
+    } while (n >>= 1);
+
+    string outString = std::string(p, buffer + 64);
+
+
+    // |33222222222211111111110000000000|
+    // |10987654321098765432109876543210|
+    // |--------------------------------|
+    // |01010101010101010101010101010101|
+
+    int outLength = outString.size();
+
+    for (int sizer = 8; sizer < 64; sizer += 8) {
+        if (outLength <= sizer) {
+            outLength = sizer;
+            break;
+        }
+    }
+
+    cout << "|";
+    for (int i = outLength; i > 0; i--) {
+        cout << i/10;
+    }
+    cout << "|" << endl << "|";
+    for (int i = outLength; i > 0; i--) {
+        cout << i % 10;
+    }
+    cout << "|" << endl << "|";
+    for (int i = outLength; i > 0; i--) {
+        cout << "-";
+    }
+    cout << "|" << endl << "|";
+    for (int i = 0; i < outLength - outString.size(); i++) {
+        cout << "0";
+    }
+    cout << outString;
+    cout << "|" << endl;
+
+
+}
+
+void ShowBin::convertAndDisplay(std::string in) {
+
+    int n = convertToNumber(in);
+    displayAsPrettyBinary(n);
+
 }

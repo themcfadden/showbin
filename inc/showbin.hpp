@@ -16,6 +16,8 @@ class NumberTypeParser
         static enum NumberType getNumberType(std::string in);
         static int parseToInt(std::string in);
         static int parseHexToInt(std::string in);
+        static int parseOctalToInt(std::string in);
+        static enum NumberType detectBase(std::string inputNUmber);
 
     private:
         static bool _onlyHasDigits(std::string s);
@@ -38,19 +40,23 @@ class NumberTypeParser
         static bool _isHexNumber(std::string s);
         static bool _isBinaryNumber(std::string s);
 
+
+        static std::string _trim(char const *str);
+
 };
 
 class ShowBin {
     public:
         ShowBin() {};
-        enum NumberType detectBase(std::string inputNUmber);
         int convertToNumber(std::string in);
+        void displayAsPrettyBinary(int n);
+        void convertAndDisplay(std::string in);
 
     private:
         bool _checkForPrefix(std::string prefix, std::string in);
         bool _checkForShortPrefix(std::string prefix, std::string in);
         bool _checkForPostfix(std::string postfix, std::string in);
-        std::string _trim(char const *str);
+
 };
 
 #endif
