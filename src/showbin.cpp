@@ -278,15 +278,15 @@ void ShowBin::displayAsPrettyBinary(int n) {
     }
 
     cout << "|";
-    for (int i = outLength; i > 0; i--) {
+    for (int i = outLength - 1; i >= 0; i--) {
         cout << i/10;
     }
     cout << "|" << endl << "|";
-    for (int i = outLength; i > 0; i--) {
+    for (int i = outLength - 1; i >= 0; i--) {
         cout << i % 10;
     }
     cout << "|" << endl << "|";
-    for (int i = outLength; i > 0; i--) {
+    for (int i = outLength - 1; i >= 0; i--) {
         cout << "-";
     }
     cout << "|" << endl << "|";
