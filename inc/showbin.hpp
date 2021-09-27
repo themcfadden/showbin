@@ -42,7 +42,7 @@ class NumberTypeParser
 
 
         static std::string _trim(char const *str);
-
+        static std::string _str_tolower(std::string s);
 };
 
 class ShowBin {
@@ -54,8 +54,8 @@ class ShowBin {
 
     private:
         bool _checkForPrefix(std::string prefix, std::string in);
-        bool _checkForShortPrefix(std::string prefix, std::string in);
-        bool _checkForPostfix(std::string postfix, std::string in);
+//        bool _checkForShortPrefix(std::string prefix, std::string in);
+//        bool _checkForPostfix(std::string postfix, std::string in);
 
 };
 

@@ -1,5 +1,5 @@
 
-#include "showbin.hpp"
+#include "../inc/showbin.hpp"
 #include <cstring>
 #include <string>
 #include <iostream>
@@ -23,10 +23,7 @@ const char* OCTAL_PREFIX {"0o"};
 // Private
 //
 
-//
-// Helpers
-//
-std::string str_tolower(std::string s) {
+std::string NumberTypeParser::_str_tolower(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(),
                    [](unsigned char c){ return std::tolower(c); } // correct
                   );
@@ -47,7 +44,7 @@ string NumberTypeParser::_trim(char const *str)
 
 
 bool NumberTypeParser::_onlyHasHexDigits(string s) {
-    s = str_tolower(s);
+    s = _str_tolower(s);
     return s.find_first_not_of( "0123456789abcdef" ) == string::npos;
 }
 
@@ -65,7 +62,7 @@ bool NumberTypeParser::_onlyHasBinaryDigits(string s) {
 
 //const char * NumberTypeParser::_movePastPrefixIfPresent(std::string in) {
 const string NumberTypeParser::_movePastPrefixIfPresent(std::string in) {
-    in = str_tolower(in);
+    in = _str_tolower(in);
     const char* newStart;
 
     if (_hasPrefix(BINARY_PREFIX, in) ||
@@ -78,30 +75,6 @@ const string NumberTypeParser::_movePastPrefixIfPresent(std::string in) {
     return newStart;
 }
 
-bool NumberTypeParser::_prefixedNumberOnlyHasHexDigits(std::string in)
-{
-    const std::string newStart = _movePastPrefixIfPresent(in);
-    return _onlyHasHexDigits(newStart);
-}
-
-bool NumberTypeParser::_prefixedNumberOnlyHasOctalDigits(std::string in)
-{
-    const std::string newStart = _movePastPrefixIfPresent(in);
-    return _onlyHasOctalDigits(newStart);
-}
-
-bool NumberTypeParser::_prefixedNumberOnlyHasDigits(std::string in)
-{
-    const std::string newStart = _movePastPrefixIfPresent(in);
-    return _onlyHasDigits(newStart);
-}
-
-bool NumberTypeParser::_prefixedNumberOnlyHasBinaryDigits(std::string in)
-{
-    const std::string newStart = _movePastPrefixIfPresent(in);
-    return _onlyHasBinaryDigits(newStart);
-}
-
 
 bool NumberTypeParser::_hasPrefix(std::string prefix, std::string in)
 {
@@ -110,59 +83,6 @@ bool NumberTypeParser::_hasPrefix(std::string prefix, std::string in)
 //    if (in.find(prefix) == 0) DEBUG_PRINT("Has prefix\n");
 //    else DEBUG_PRINT("NO prefix\n");
     return in.find(prefix) == 0;
-}
-
-bool NumberTypeParser::_isDecimalNumber(std::string in)
-{
-//    DEBUG_PRINT(in + "\n");
-    if (_onlyHasDigits(in)) {
-//        DEBUG_PRINT("only has digits\n");
-        return true;
-    }
-    else {
-//        DEBUG_PRINT("number does not have only digits\n");
-        return false;
-    }
-}
-
-bool NumberTypeParser::_isOctalNumber(std::string in)
-{
-    if (_hasPrefix(OCTAL_PREFIX, in)) {
-        if (_prefixedNumberOnlyHasOctalDigits(in)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool NumberTypeParser::_isHexNumber(std::string in)
-{
-    if (_hasPrefix(HEX_PREFIX, in)) {
-        if (_prefixedNumberOnlyHasHexDigits(in)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool NumberTypeParser::_isBinaryNumber(std::string in)
-{
-    if (_hasPrefix(BINARY_PREFIX, in)) {
-        if (_prefixedNumberOnlyHasBinaryDigits(in)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-enum NumberType NumberTypeParser::getNumberType(std::string in)
-{
-    if (_isDecimalNumber(in)) return NumberType::Decimal;
-    else if (_isOctalNumber(in)) return NumberType::Octal;
-    else if (_isHexNumber(in)) return NumberType::Hexidecimal;
-    else if (_isBinaryNumber(in)) return NumberType::Binary;
-    else return NumberType::Unknown;
 }
 
 int NumberTypeParser::parseToInt(std::string in) {
@@ -209,24 +129,100 @@ int NumberTypeParser::parseOctalToInt(std::string in) {
 }
 
 
+//
+//
+//
+//bool ShowBin::_checkForPrefix(string prefix, string in) {
+//    return in.rfind(prefix, 0) == 0;
+//}
+
+//bool ShowBin::_checkForShortPrefix(string prefix, string in) {
+//    return in.rfind(BINARY_SHORT_PREFIX, 0) == 0;
+//}
+
+
+bool NumberTypeParser::_prefixedNumberOnlyHasHexDigits(std::string in)
+{
+    const std::string newStart = _movePastPrefixIfPresent(in);
+    return _onlyHasHexDigits(newStart);
+}
+
+bool NumberTypeParser::_prefixedNumberOnlyHasOctalDigits(std::string in)
+{
+    const std::string newStart = _movePastPrefixIfPresent(in);
+    return _onlyHasOctalDigits(newStart);
+}
+
+bool NumberTypeParser::_prefixedNumberOnlyHasDigits(std::string in)
+{
+    const std::string newStart = _movePastPrefixIfPresent(in);
+    return _onlyHasDigits(newStart);
+}
+
+bool NumberTypeParser::_prefixedNumberOnlyHasBinaryDigits(std::string in)
+{
+    const std::string newStart = _movePastPrefixIfPresent(in);
+    return _onlyHasBinaryDigits(newStart);
+}
+
+bool NumberTypeParser::_isDecimalNumber(std::string in)
+{
+//    DEBUG_PRINT(in + "\n");
+    if (_onlyHasDigits(in)) {
+//        DEBUG_PRINT("only has digits\n");
+        return true;
+    }
+    else {
+//        DEBUG_PRINT("number does not have only digits\n");
+        return false;
+    }
+}
+
+bool NumberTypeParser::_isOctalNumber(std::string in)
+{
+    if (_hasPrefix(OCTAL_PREFIX, in)) {
+        if (_prefixedNumberOnlyHasOctalDigits(in)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool NumberTypeParser::_isHexNumber(std::string in)
+{
+    if (_hasPrefix(HEX_PREFIX, in)) {
+        if (_prefixedNumberOnlyHasHexDigits(in)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool NumberTypeParser::_isBinaryNumber(std::string in)
+{
+    if (_hasPrefix(BINARY_PREFIX, in)) {
+        if (_prefixedNumberOnlyHasBinaryDigits(in)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+enum NumberType NumberTypeParser::getNumberType(std::string in)
+{
+    if (_isDecimalNumber(in)) return NumberType::Decimal;
+    else if (_isOctalNumber(in)) return NumberType::Octal;
+    else if (_isHexNumber(in)) return NumberType::Hexidecimal;
+    else if (_isBinaryNumber(in)) return NumberType::Binary;
+    else return NumberType::Unknown;
+}
+
 enum NumberType NumberTypeParser::detectBase(std::string inString) {
     const auto c_string = inString.c_str();
     auto s = _trim(c_string);
 
     return NumberTypeParser::getNumberType(s);
 }
-
-//
-//
-//
-bool ShowBin::_checkForPrefix(string prefix, string in) {
-    return in.rfind(prefix, 0) == 0;
-}
-
-//bool ShowBin::_checkForShortPrefix(string prefix, string in) {
-//    return in.rfind(BINARY_SHORT_PREFIX, 0) == 0;
-//}
-
 
 int ShowBin::convertToNumber(std::string in) {
     int n {-1};
@@ -245,7 +241,7 @@ int ShowBin::convertToNumber(std::string in) {
             return NumberTypeParser::parseHexToInt(in);
             break;
         default:
-            DEBUG_PRINT("Unknown Number\n");
+            DEBUG_PRINT("Unknown number type\n");
             break;
     }
     return -1;
@@ -261,7 +257,6 @@ void ShowBin::displayAsPrettyBinary(int n) {
     } while (n >>= 1);
 
     string outString = std::string(p, buffer + 64);
-
 
     // |33222222222211111111110000000000|
     // |10987654321098765432109876543210|
