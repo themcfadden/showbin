@@ -2,7 +2,7 @@
 #include "showbin.hpp"
 #include <string>
 
-int factorial(int number) { return number <= 1 ? number : factorial(number - 1) * number; }
+//int factorial(int number) { return number <= 1 ? number : factorial(number - 1) * number; }
 
 // 1. Get input, detecting base
 //    - 0bXXXX : Binary
@@ -94,6 +94,9 @@ TEST_CASE("Detect Octal") {
 	inputString = "10o1";
 	CHECK(NumberType::Octal != p.detectBase(inputString));
 
+	inputString = "0o1";
+	CHECK(NumberType::Octal == p.detectBase(inputString));
+
 	inputString = "0o678";
 	CHECK(NumberType::Octal == p.detectBase(inputString));
 
@@ -159,3 +162,9 @@ TEST_CASE("Convert Octal") {
 	CHECK(9 == b.convertToNumber(inputString));
 }
 
+TEST_CASE("Bad Input") {
+	ShowBin b;
+
+	std::string inputString = "-help";
+	CHECK(-1 == b.convertToNumber(inputString));
+}

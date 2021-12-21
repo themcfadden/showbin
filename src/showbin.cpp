@@ -241,7 +241,7 @@ int ShowBin::convertToNumber(std::string in) {
             return NumberTypeParser::parseHexToInt(in);
             break;
         default:
-            DEBUG_PRINT("Unknown number type\n");
+            //DEBUG_PRINT("Unknown number type\n");
             break;
     }
     return -1;
@@ -297,6 +297,11 @@ void ShowBin::displayAsPrettyBinary(int n) {
 void ShowBin::convertAndDisplay(std::string in) {
 
     int n = convertToNumber(in);
-    displayAsPrettyBinary(n);
+    if (n > 0) {
+        displayAsPrettyBinary(n);
+    }
+    else {
+        printf("Unrecognized number\r\n");
+    }
 
 }

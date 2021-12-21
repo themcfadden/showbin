@@ -1,11 +1,21 @@
-#ifndef __INC_H__
-#define __INC_H__
+#ifndef __NUMTYPEPARSER_H__
+#define __NUMTYPEPARSER_H__
 
 #include <string>
 
 
 #define DEBUG_PRINT(msg) cout << __FILE__ << ":" <<__LINE__ << ": " << (msg) << std::endl;
 //#define DEBUG_PRINT(msg) ((void) (msg))
+
+const char* BINARY_PREFIX {"0b"};
+//const char* BINARY_SHORT_PREFIX {"b"};
+//const char* BINARY_POSTFIX {"b"};
+const char* HEX_PREFIX {"0x"};
+//const char* HEX_SHORT_PREFIX {"x"};
+//const char* HEX_POSTFIX {"x"};
+const char* OCTAL_PREFIX {"0o"};
+//const char* OCTAL_SHORT_PREFIX {"o"};
+//const char* OCT_POSTFIX {"o"};
 
 enum class NumberType {Unknown, Binary, Octal, Decimal, Hexidecimal};
 
@@ -16,10 +26,9 @@ class NumberTypeParser
         static enum NumberType getNumberType(std::string in);
         static int parseToInt(std::string in);
         static int parseHexToInt(std::string in);
-        static int parseOctalToInt(std::string in);
-        static enum NumberType detectBase(std::string inputNUmber);
 
     private:
+        static std::string _trim(char const *str);
         static bool _onlyHasDigits(std::string s);
         static bool _onlyHasHexDigits(std::string s);
         static bool _onlyHasBinaryDigits(std::string s);
@@ -39,22 +48,6 @@ class NumberTypeParser
         static bool _isOctalNumber(std::string s);
         static bool _isHexNumber(std::string s);
         static bool _isBinaryNumber(std::string s);
-
-        static std::string _trim(char const *str);
-        static std::string _str_tolower(std::string s);
-};
-
-class ShowBin {
-    public:
-        ShowBin() {};
-        int convertToNumber(std::string in);
-        void displayAsPrettyBinary(int n);
-        void convertAndDisplay(std::string in);
-
-    private:
-        bool _checkForPrefix(std::string prefix, std::string in);
-//        bool _checkForShortPrefix(std::string prefix, std::string in);
-//        bool _checkForPostfix(std::string postfix, std::string in);
 
 };
 
